@@ -1,13 +1,11 @@
 package com.reconnect.web.utils.mapper;
 
-import com.reconnect.web.utils.mapper.annotation.Mapper;
 import com.reconnect.web.utils.mapper.exceptions.MapperException;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Arrays;
-import java.util.Objects;
-
-import static com.reconnect.web.utils.mapper.MapperPackages.ENTITY_CNV;
 
 /**
  * @author s.vareyko
@@ -59,17 +57,12 @@ public interface ToDtoMapper<D extends MappedDto, E extends MappedEntity> extend
     @SuppressWarnings("unchecked")
     default D map(final E from) {
 
+        final Type[] arg = ((ParameterizedType) this.getClass().getGenericInterfaces()[0]).getActualTypeArguments();
         final D to;
-        final Class<D> toClass = (Class<D>) ENTITY_CNV.get(from.getClass());
+        final Class<D> toClass = (Class<D>) arg[ARG_DTO];
 
         try {
-            if (Objects.isNull(toClass)) {
-                final Mapper annotation = this.getClass().getDeclaredAnnotation(Mapper.class);
-                final Class<D> target = (Class<D>) annotation.target();
-                to = target.newInstance();
-            } else {
-                to = toClass.newInstance();
-            }
+            to = toClass.newInstance();
         } catch (final Exception e) {
             throw new MapperException("Unable to instantiate " + toClass.getClass().getSimpleName(), e);
         }

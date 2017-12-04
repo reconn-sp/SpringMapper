@@ -4,6 +4,8 @@ import com.reconnect.web.utils.mapper.exceptions.MapperException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 
 /**
@@ -65,8 +67,9 @@ public interface ToEntityMapper<D extends MappedDto, E extends MappedEntity> ext
      */
     default E map(final D from) {
 
+        final Type[] arg = ((ParameterizedType) this.getClass().getGenericInterfaces()[0]).getActualTypeArguments();
         final E to;
-        final Class<E> toClass = (Class<E>) MapperPackages.DTO_CNV.get(from.getClass());
+        final Class<E> toClass = (Class<E>) arg[ARG_ENTITY];
 
         try {
             to = toClass.newInstance();

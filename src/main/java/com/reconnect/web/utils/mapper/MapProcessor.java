@@ -9,6 +9,9 @@ import java.util.List;
  */
 interface MapProcessor {
 
+    int ARG_DTO = 0;
+    int ARG_ENTITY = 1;
+
     /**
      * Return list of ignored field names.
      *
