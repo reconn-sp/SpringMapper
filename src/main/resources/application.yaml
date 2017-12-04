@@ -1,8 +1,8 @@
 spring:
     datasource:
-        password: ${DRY_DATABASE_PASSWORD:testpw}
-        url: ${DRY_DATABASE_URL:jdbc:mysql://localhost:3306/test}
-        username: ${DRY_DATABASE_USERNAME:test}
+        password: ${DATABASE_PASSWORD:testpw}
+        url: ${DATABASE_URL:jdbc:mysql://localhost:3306/test}
+        username: ${DATABASE_USERNAME:test}
         driver-class-name: com.mysql.jdbc.Driver
     jpa:
         hibernate:
