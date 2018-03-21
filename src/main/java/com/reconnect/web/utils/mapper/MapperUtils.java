@@ -23,6 +23,7 @@ final class MapperUtils {
     static final int ARG_DTO = 0;
     static final int ARG_ENTITY = 1;
 
+    private static final String JAVA_LAZY = "_jvst";
     private static final Logger log = LoggerFactory.getLogger("mapper");
 
     /**
@@ -57,11 +58,7 @@ final class MapperUtils {
      * @param ignore list of ignored fields
      */
     static void copyByAccessors(final Object from, final Object to, final Set<String> ignore) {
-
-        final Class<?> toClass = to.getClass();
-        final Field[] fields = toClass.getDeclaredFields();
-
-        Arrays.stream(fields)
+        Arrays.stream(getFields(from, to))
                 .filter(field -> !Modifier.isStatic(field.getModifiers())
                         && !Modifier.isFinal(field.getModifiers())
                         && !ignore.contains(field.getName()))
@@ -98,5 +95,20 @@ final class MapperUtils {
                             "Implement custom conversion instead. Add field to \"ignore\" to stop seeing this warning.",
                     name, fromClass.getCanonicalName(), toClass.getCanonicalName()));
         }
+    }
+
+    /**
+     * Helper method that load list of fields for copy.
+     *
+     * @param from object from will be copied values
+     * @param to   object where will be copied values
+     * @return array of fields
+     */
+    private static Field[] getFields(final Object from, final Object to) {
+        final Class<?> toClass = to.getClass();
+        if (toClass.getSimpleName().contains(JAVA_LAZY)) {
+            return from.getClass().getDeclaredFields();
+        }
+        return toClass.getDeclaredFields();
     }
 }
